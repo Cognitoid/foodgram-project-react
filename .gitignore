@@ -130,3 +130,9 @@ dmypy.json
 
 # .idea
 .idea
+
+# Redactor staff
+.vscode/
+.flake8
+.http
+foodgram-project-react.code-workspace

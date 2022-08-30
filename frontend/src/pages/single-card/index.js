@@ -27,7 +27,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
 
   useEffect(_ => {
     api.getRecipe ({
-        recipe_id: id
+        recipe: id
       })
       .then(res => {
         setRecipe(res)

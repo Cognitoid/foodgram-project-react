@@ -53,7 +53,7 @@ const RecipeEdit = ({ onItemDelete }) => {
   useEffect(_ => {
     if (value.length === 0 || !loading) { return }
     api.getRecipe ({
-      recipe_id: id
+      recipe: id
     }).then(res => {
       const {
         image,
@@ -123,7 +123,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             tags: value.filter(item => item.value).map(item => item.id),
             cooking_time: recipeTime,
             image: recipeFile,
-            recipe_id: id
+            recipe: id
           }
           api
             .updateRecipe(data, recipeFileWasManuallyChanged)
@@ -287,7 +287,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           <div
             className={styles.deleteRecipe}
             onClick={_ => {
-              api.deleteRecipe({ recipe_id: id })
+              api.deleteRecipe({ recipe: id })
                 .then(res => {
                   onItemDelete && onItemDelete()
                   history.push('/recipes')

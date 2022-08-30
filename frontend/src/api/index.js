@@ -127,12 +127,12 @@ class Api {
   }
 
   getRecipe ({
-    recipe_id
+    recipe
   }) {
     const token = localStorage.getItem('token')
     const authorization = token ? { 'authorization': `Token ${token}` } : {}
     return fetch(
-      `/api/recipes/${recipe_id}/`,
+      `/api/recipes/${recipe}/`,
       {
         method: 'GET',
         headers: {
@@ -174,7 +174,7 @@ class Api {
 
   updateRecipe ({
     name,
-    recipe_id,
+    recipe,
     image,
     tags,
     cooking_time,
@@ -183,7 +183,7 @@ class Api {
   }, wasImageUpdated) { // image was changed
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${recipe_id}/`,
+      `/api/recipes/${recipe}/`,
       {
         method: 'PATCH',
         headers: {
@@ -192,7 +192,7 @@ class Api {
         },
         body: JSON.stringify({
           name,
-          id: recipe_id,
+          id: recipe,
           image: wasImageUpdated ? image : undefined,
           tags,
           cooking_time: Number(cooking_time),
@@ -371,10 +371,10 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  deleteRecipe ({ recipe_id }) {
+  deleteRecipe ({ recipe }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${recipe_id}/`,
+      `/api/recipes/${recipe}/`,
       {
         method: 'DELETE',
         headers: {

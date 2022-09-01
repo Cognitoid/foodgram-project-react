@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 
-from api.models import Favorites
+from api.models import Favorite
 from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 
 EMPTY_VALUE = settings.EMPTY_VALUE
@@ -57,6 +57,6 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_VALUE
 
     def favorited(self, obj):
-        return Favorites.objects.filter(recipe=obj).count()
+        return Favorite.objects.filter(recipe=obj).count()
 
     favorited.short_description = 'В избранном'

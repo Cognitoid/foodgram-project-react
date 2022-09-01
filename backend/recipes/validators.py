@@ -3,7 +3,7 @@ import re
 from django.core.exceptions import ValidationError
 
 
-def LatinAlphabetNumberValidator(value):
+def latin_alphabet_number_validator(value):
     reg = re.compile('^[-a-zA-Z0-9_]+$')
     if not reg.match(value):
         raise ValidationError(

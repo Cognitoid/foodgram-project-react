@@ -81,21 +81,41 @@ class RecipeWriteSerializer(ModelSerializer):
         read_only_fields = ('author',)
 
     def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data['ingredients']
         if not ingredients:
-            raise ValidationError({
-                'ingredients': 'Добавьте не менее 1 ингредиента для рецепта'})
+            raise ValidationError(
+                {'ingredients': 'Добавьте не менее 1 ингредиента для рецепта'}
+            )
+        ingredients_set = set()
+        for ingredient in ingredients:
+            if ingredient['id'] in ingredients_set:
+                raise ValidationError(
+                    f'Ингредиент с ID={ingredient["id"]} не должен повторяться'
+                )
+            ingredients_set.add(ingredient['id'])
         data['ingredients'] = ingredients
+        tags = data['tags']
+        tags_set = set()
+        for tag in tags:
+            if tag in tags_set:
+                raise ValidationError(
+                    f'Тег с ID={tag} не должен повторяться'
+                )
+            tags_set.add(tag)
+        data['tags'] = tags
         return data
 
     @staticmethod
     def add_ingredients(ingredients, recipe):
-        for ingredient in ingredients:
-            IngredientRecipe.objects.create(
-                recipe=recipe,
-                ingredient_id=ingredient['id'],
-                amount=ingredient['amount'],
-            )
+        IngredientRecipe.objects.bulk_create(
+            [
+                IngredientRecipe(
+                    ingredient_id=ingredient['id'],
+                    recipe=recipe,
+                    amount=ingredient['amount'],
+                ) for ingredient in ingredients
+            ]
+        )
 
     @staticmethod
     def add_tags(tags, recipe):
@@ -149,7 +169,9 @@ class RecipeReadSerializer(ModelSerializer):
     author = SpecialUserSerializer(
         read_only=True
     )
-    ingredients = SerializerMethodField(
+    ingredients = IngredientRecipeReadSerializer(
+        source='recipe_amount',
+        many=True,
         read_only=True
     )
     is_favorited = SerializerMethodField(
@@ -179,7 +201,7 @@ class RecipeReadSerializer(ModelSerializer):
         if user.is_anonymous:
             return False
         return Recipe.objects.filter(
-            favorites__user=user,
+            favorite__user=user,
             id=obj.id
         ).exists()
 
@@ -194,11 +216,3 @@ class RecipeReadSerializer(ModelSerializer):
 
     def get_image(self, obj):
         return obj.image.url
-
-    def get_ingredients(self, obj):
-        return IngredientRecipeReadSerializer(
-            IngredientRecipe.objects.filter(
-                recipe=obj
-            ),
-            many=True
-        ).data

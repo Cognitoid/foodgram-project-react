@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 
-from api.models import Favorites, Purchase, Subscriber
+from api.models import Favorite, Purchase, Subscriber
 
 EMPTY_VALUE = settings.EMPTY_VALUE
 
@@ -18,7 +18,7 @@ class PurchaseAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_VALUE
 
 
-@admin.register(Favorites)
+@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = (
         'user',

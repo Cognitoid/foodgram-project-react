@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Favorites, Purchase, Subscriber
+from api.models import Favorite, Purchase, Subscriber
 from api.serializers import (
     FavoriteSerializer,
     PurchaseSerializer,
@@ -22,17 +22,17 @@ from users.models import User
 
 @api_view(['GET', ])
 @permission_classes([IsAuthenticated])
-def DownloadCart(request):
+def download_cart(request):
     purchase_list = IngredientRecipe.objects.filter(
         recipe__purchase__user=request.user
     ).values(
         'ingredient__name',
         'ingredient__measurement_unit'
-    ).annotate(amount=Sum('amount'))
+    ).annotate(total=Sum('amount'))
     shopping_list = []
     for item in purchase_list:
         shopping_list.append(
-            f'{item["ingredient__name"]}: {item["amount"]} '
+            f'{item["ingredient__name"]}: {item["total"]} '
             f'{item["ingredient__measurement_unit"]}\n'
         )
     response = HttpResponse(shopping_list, 'Content-Type: text/plain')
@@ -70,11 +70,7 @@ class FollowApiView(APIView):
             data=data,
             context={'request': request}
         )
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
             serializer.data,
@@ -83,14 +79,6 @@ class FollowApiView(APIView):
 
     def delete(self, request, users_id):
         user = request.user
-        if user.is_anonymous:
-            data = {
-                'errors': 'Учетные данные не были предоставлены.'
-            }
-            return Response(
-                data=data,
-                status=status.HTTP_401_UNAUTHORIZED
-            )
         author = get_object_or_404(
             User,
             id=users_id
@@ -101,7 +89,7 @@ class FollowApiView(APIView):
             user=user,
             author=author
         )
-        if deleting_entry is not None:
+        if deleting_entry.exists():
             deleting_entry.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -111,19 +99,6 @@ class BaseFavoriteCartViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def create(self, request, *args, **kwargs):
-        if self.model == Favorites:
-            model_context = 'избранное'
-        else:
-            model_context = 'список покупок'
-        user = request.user
-        if user.is_anonymous:
-            data = {
-                'errors': 'Учетные данные не были предоставлены.'
-            }
-            return Response(
-                data=data,
-                status=status.HTTP_401_UNAUTHORIZED
-            )
         recipe = int(self.kwargs['recipes_id'])
         recipe = get_object_or_404(
             Recipe,
@@ -136,28 +111,15 @@ class BaseFavoriteCartViewSet(ModelViewSet):
             )
         except IntegrityError:
             data = {
-                'errors': f'Ошибка добавления в {model_context}.'
+                'errors': 'Ошибка добавления рецепта в список.'
             }
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         data = {
-            'status': f'Рецепт успешно добавлен в {model_context}.'
+            'status': 'Рецепт успешно добавлен в список.'
         }
         return Response(data=data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        if self.model == Favorites:
-            model_context = 'избранное'
-        else:
-            model_context = 'список покупок'
-        user = request.user
-        if user.is_anonymous:
-            data = {
-                'errors': 'Учетные данные не были предоставлены.'
-            }
-            return Response(
-                data=data,
-                status=status.HTTP_401_UNAUTHORIZED
-            )
         recipe = self.kwargs['recipes_id']
         user_id = request.user.id
         try:
@@ -167,14 +129,14 @@ class BaseFavoriteCartViewSet(ModelViewSet):
             ).delete()
         except self.model.DoesNotExist:
             data = {
-                'errors': f'Ошибка удаления из {model_context}.'
+                'errors': 'Ошибка удаления рецепта из списка.'
             }
             return Response(
                 data=data,
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
-            'status': f'Рецепт успешно удален из {model_context}.'
+            'status': 'Рецепт успешно удален из списка.'
         }
         return Response(data=data)
 
@@ -187,5 +149,5 @@ class PurchaseViewSet(BaseFavoriteCartViewSet):
 
 class FavoriteViewSet(BaseFavoriteCartViewSet):
     serializer_class = FavoriteSerializer
-    queryset = Favorites.objects.all()
-    model = Favorites
+    queryset = Favorite.objects.all()
+    model = Favorite

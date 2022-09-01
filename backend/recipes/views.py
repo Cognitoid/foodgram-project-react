@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.models import Favorites, Purchase
+from api.models import Favorite, Purchase
 from recipes.models import Ingredient, Recipe, Tag
 from recipes.permissions import IsAuthorAdminModeratorOrReadOnly
 from recipes.serializers import (
@@ -47,7 +47,7 @@ class RecipeViewSet(ModelViewSet):
     def get_queryset(self):
         return Recipe.objects.annotate(
             is_favorited=Exists(
-                Favorites.objects.filter(
+                Favorite.objects.filter(
                     user=self.request.user, recipe=OuterRef('id')
                 )
             ),

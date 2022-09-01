@@ -91,12 +91,10 @@ class SubscribeListSerializer(serializers.ModelSerializer):
             return False
         if other_user.count() == 0:
             return False
-        if Subscriber.objects.filter(
+        return Subscriber.objects.filter(
             user=user,
             author=current_user
-        ).exists():
-            return True
-        return False
+        ).exists()
 
     def get_recipes(self, obj):
         recipes = obj.recipes.all()[:3]

@@ -1,16 +1,15 @@
 from django.conf.urls import url
 from django.urls import include, path
-
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from api.views import (
-    DownloadCart,
     FavoriteViewSet,
     FollowApiView,
     FollowListApiView,
-    PurchaseViewSet
+    PurchaseViewSet,
+    download_cart
 )
 
 app_name = 'api'
@@ -19,11 +18,12 @@ app_name = 'api'
 urlpatterns = [
     path(
         'users/subscriptions/',
-        FollowListApiView.as_view()
+        FollowListApiView.as_view(),
+        name='subscriptions'
     ),
     path(
         'recipes/download_shopping_cart/',
-        DownloadCart, name='download'
+        download_cart, name='download'
     ),
     path(
         'users/<int:users_id>/subscribe/',

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from recipes.validators import LatinAlphabetNumberValidator
+from recipes.validators import latin_alphabet_number_validator
 
 User = get_user_model()
 
@@ -40,7 +40,7 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=200,
         unique=True,
-        validators=[LatinAlphabetNumberValidator, ],
+        validators=[latin_alphabet_number_validator, ],
         verbose_name='Уникальный слаг'
     )
 
@@ -54,6 +54,31 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    GRAM = 'г'
+    HANDFUL = 'горсть'
+    SLICE = 'доль.'
+    STAR = 'зв.'
+    CLOVE = 'зуб.'
+    DROP = 'кап.'
+    KILOGRAM = 'кг'
+    PIECE = 'кус.'
+    LITER = 'л'
+    SHEET = 'лист'
+    MILLILITER = 'мл'
+    BAG = 'пак.'
+    PACK = 'пач.'
+    LAYER = 'пласт'
+    TOTASTE = 'по вкусу'
+    BUNCH = 'пуч.'
+    GLASS = 'ст.'
+    TABLESPOON = 'ст.л.'
+    STEM = 'стеб.'
+    POD = 'стр.'
+    CARCASS = 'туш.'
+    PACKAGING = 'уп.'
+    TEASPOON = 'ч.л.'
+    PIECES = 'шт.'
+    PINCH = 'щеп.'
 
     name = models.CharField(
         blank=False,
@@ -63,31 +88,31 @@ class Ingredient(models.Model):
     )
 
     CHOICES = (
-        ('г', 'грамм'),
-        ('горсть', 'горсть'),
-        ('доль.', 'долька'),
-        ('зв.', 'звездочка'),
-        ('зуб.', 'зубчик'),
-        ('кап.', 'капля'),
-        ('кг', 'килограмм'),
-        ('кус.', 'кусок'),
-        ('л', 'литр'),
-        ('лист', 'лист'),
-        ('мл', 'миллилитр'),
-        ('пак.', 'пакетик'),
-        ('пач.', 'пачка'),
-        ('пласт', 'пласт'),
-        ('по вкусу', 'по вкусу'),
-        ('пуч.', 'пучок'),
-        ('ст.', 'стакан'),
-        ('ст.л.', 'столовая ложка'),
-        ('стеб.', 'стебель'),
-        ('стр.', 'стручок'),
-        ('туш.', 'тушка'),
-        ('уп.', 'упаковка'),
-        ('ч.л.', 'чайная ложка'),
-        ('шт.', 'штук'),
-        ('щеп.', 'щепотка')
+        (GRAM, 'грамм'),
+        (HANDFUL, 'горсть'),
+        (SLICE, 'долька'),
+        (STAR, 'звездочка'),
+        (CLOVE, 'зубчик'),
+        (DROP, 'капля'),
+        (KILOGRAM, 'килограмм'),
+        (PIECE, 'кусок'),
+        (LITER, 'литр'),
+        (SHEET, 'лист'),
+        (MILLILITER, 'миллилитр'),
+        (BAG, 'пакетик'),
+        (PACK, 'пачка'),
+        (LAYER, 'пласт'),
+        (TOTASTE, 'по вкусу'),
+        (BUNCH, 'пучок'),
+        (GLASS, 'стакан'),
+        (TABLESPOON, 'столовая ложка'),
+        (STEM, 'стебель'),
+        (POD, 'стручок'),
+        (CARCASS, 'тушка'),
+        (PACKAGING, 'упаковка'),
+        (TEASPOON, 'чайная ложка'),
+        (PIECES, 'штук'),
+        (PINCH, 'щепотка')
     )
 
     measurement_unit = models.CharField(
@@ -187,6 +212,6 @@ class IngredientRecipe(models.Model):
 
     def __str__(self):
         return (
-            f'{self.ingredient.name}: {self.quantity} '
+            f'{self.ingredient.name}: {self.amount} '
             f'{self.ingredient.measurement_unit}'
         )

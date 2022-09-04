@@ -59,8 +59,8 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
-            sudo docker compose stop
-            sudo docker compose rm backend
+            sudo docker-compose stop
+            sudo docker-compose rm backend
             cat /dev/null > .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -72,7 +72,7 @@ jobs:
             echo EMPTY_VALUE=${{ secrets.EMPTY_VALUE }} >> .env
             echo INGREDIENT_QUANTITY=${{ secrets.INGREDIENT_QUANTITY }} >> .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
-            sudo docker compose up --detach --build
+            sudo docker-compose up -d --build
   send_message:
     runs-on: ubuntu-latest
     needs: deploy

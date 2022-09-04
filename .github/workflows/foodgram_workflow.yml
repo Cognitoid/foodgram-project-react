@@ -71,7 +71,7 @@ jobs:
             echo INGREDIENT_QUANTITY=${{ secrets.INGREDIENT_QUANTITY }} >> .env 
             echo DEBUG=${{ secrets.DEBUG }} >> .env 
             echo ${{ secrets.PASSPHRASE }} | sudo -S docker pull ${{ secrets.DOCKER_USERNAME }}/foodgran_backend:latest
-            echo ${{ secrets.PASSPHRASE }} | sudo -S docker compose up -d
+            echo ${{ secrets.PASSPHRASE }} | sudo -S docker-compose up -d
   send_message:
     runs-on: ubuntu-latest
     needs: deploy

@@ -1,7 +1,7 @@
 
 # foodgram-project-react (API)
 <div id="badges">
-  <img src="https://img.shields.io/badge/JScript-yellow?style=for-the-badge&logo=JavaScript&logoColor=white" alt="JavaScript"/> <img src="https://img.shields.io/badge/React-informational?style=for-the-badge&logo=react&logoColor=white" alt="React 17.0.1"/> <img src="https://img.shields.io/badge/Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.7"/>  <img src="https://img.shields.io/badge/django-red?style=for-the-badge&logo=django&logoColor=white" alt="Django 3.2.15"/>  <img src="https://img.shields.io/badge/Docker-blue?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Desktop 4.11.1"/>
+  <img src="https://img.shields.io/badge/JScript-yellow?style=for-the-badge&logo=JavaScript&logoColor=white" alt="JavaScript"/> <img src="https://img.shields.io/badge/React-informational?style=for-the-badge&logo=react&logoColor=white" alt="React 17.0.1"/> <img src="https://img.shields.io/badge/Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.7"/>  <img src="https://img.shields.io/badge/django-blue?style=for-the-badge&logo=django&logoColor=white" alt="Django 3.2.15"/>  <img src="https://img.shields.io/badge/Docker-yellow?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Desktop 4.11.1"/>
 </div>
 
 ______________________________
@@ -23,12 +23,17 @@ __________________________
 #### Как запустить проект:
 **Шаг 1. Проверка и установка Docker**
 Убедитесь, что у вас установлен Docker. Для этого введите команды:
-```docker -v```
+```
+docker -v
+```
 При отсутствии скачайте и установите [Docker Desktop для своей версии ОС] (https://www.docker.com/products/docker-desktop/).
 
 **Шаг 2. Клонирование репозитория с проектом на свой компьютер**
 Введите команду:
-```git clone git@github.com:Cognitoid/foodgram-project-react.git```
+```
+git clone git@github.com:Cognitoid/foodgram-project-react.git
+```
+
 **Шаг 3. Создание файла с переменными окружения .env**
 Пример:
 ```
@@ -46,30 +51,51 @@ INGREDIENT_QUANTITY=4 (количество ингредиентов, отраж
 ```
 **Шаг 4. Запуск docker-compose**
 Для запуска необходимо выполнить из директории проекта infra/ команду:
-```docker-compose up -d```
+```
+docker-compose up -d
+```
+
 **Шаг 5. Задание структуры базы данных**
 Примените миграции:
-```docker-compose exec web python manage.py makemigrations
+```
+docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 ```
+
 **Шаг 6. Подгрузка статики**
 Выполните команду:
-```docker-compose exec web python manage.py collectstatic```
+```
+docker-compose exec web python manage.py collectstatic
+```
+
 **Шаг 7. Создание суперпользователя**
 Выполните команду:
-```docker-compose exec web python manage.py createsuperuser```
+```
+docker-compose exec web python manage.py createsuperuser
+```
+
 **Шаг 8. Заполнение базы тестовыми данными (необязательный шаг)**
 Выполните команду:
-```docker-compose exec web python manage.py loaddata db.json```
+```
+docker-compose exec web python manage.py loaddata db.json
+```
 **Другие команды для работы с образами и контейнерами проекта**
 Остановить работу всех контейнеров:
-```docker-compose down```
+```
+docker-compose down
+```
 Пересборка и запуск контейнеров:
-```docker-compose up -d --build ```
+```
+docker-compose up -d --build 
+```
 Мониторинг запущенных контейнеров:
-```docker stats```
+```
+docker stats
+```
 Остановка и удаление контейнеров, томов и образов:
-```docker-compose down -v```
+```
+docker-compose down -v
+```
 ______________________
 #### Техническое описание проекта:
 Список эндпойнтов и их описание доступны в формате Redoc по ссылке: http://localhost/api/docs/redoc.html
@@ -81,7 +107,8 @@ ________________________
 - Backend - enior/foodgram_backend:latest,
 - Frontend - enior/foodgram_frontend:latest
 - *Скачать с DockerHub:*
-```docker pull enior/foodgram_backend:latest
+```
+docker pull enior/foodgram_backend:latest
 docker pull enior/foodgram_frontend:latest
 ```
 

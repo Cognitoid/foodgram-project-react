@@ -1,4 +1,4 @@
-from django.db.models.expressions import Exists, OuterRef, Value
+from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from rest_framework import status
@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import Favorite, Purchase
+from recipes.filters import IngredientFilter, RecipeFilter
 from recipes.models import Ingredient, Recipe, Tag
 from recipes.permissions import IsAuthorAdminModeratorOrReadOnly
 from recipes.serializers import (
@@ -28,8 +29,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny, )
-    search_fields = ['name']
-    filter_backends = (filters.SearchFilter, )
+    filter_class = IngredientFilter
     pagination_class = None
 
 
@@ -37,6 +37,7 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     search_fields = ['name']
     filter_backends = (filters.SearchFilter, )
+    filter_class = RecipeFilter
     permission_classes = [IsAuthorAdminModeratorOrReadOnly, ]
 
     def get_serializer_class(self):
@@ -45,26 +46,26 @@ class RecipeViewSet(ModelViewSet):
         return RecipeWriteSerializer
 
     def get_queryset(self):
-        return Recipe.objects.annotate(
-            is_favorited=Exists(
-                Favorite.objects.filter(
-                    user=self.request.user, recipe=OuterRef('id')
-                )
-            ),
-            is_in_shopping_cart=Exists(
-                Purchase.objects.filter(
-                    user=self.request.user,
-                    recipe=OuterRef('id')
-                )
-            )
-        ).select_related('author').prefetch_related(
-            'tags', 'ingredients'
-        ) if self.request.user.is_authenticated else Recipe.objects.annotate(
-            is_in_shopping_cart=Value(False),
-            is_favorited=Value(False)
-        ).select_related('author').prefetch_related(
-            'tags', 'ingredients'
+        queryset = Recipe.objects.all()
+        slug = self.request.query_params.get('tags')
+        if slug is not None:
+            queryset = queryset.filter(tags__slug=slug)
+        user = self.request.user
+        if user.is_anonymous:
+            return queryset
+        queryset_filtered = queryset.annotate(
+            is_favorited=Exists(Favorite.objects.filter(
+                user=user, recipe_id=OuterRef('id')
+            )),
+            is_in_shopping_cart=Exists(Purchase.objects.filter(
+                user=user, recipe_id=OuterRef('id')
+            ))
         )
+        if self.request.GET.get('is_favorited'):
+            return queryset_filtered.filter(is_favorited=True)
+        elif self.request.GET.get('is_in_shopping_cart'):
+            return queryset_filtered.filter(is_in_shopping_cart=True)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

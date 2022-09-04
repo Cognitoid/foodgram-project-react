@@ -60,7 +60,7 @@ class FollowListApiView(ListAPIView):
 class FollowApiView(APIView):
     permission_classes = [IsAuthenticated, ]
 
-    def get(self, request, users_id):
+    def post(self, request, users_id):
         user = request.user
         data = {
             'author': users_id,

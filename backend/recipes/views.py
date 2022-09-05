@@ -73,7 +73,7 @@ class RecipeViewSet(ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid()
         serializer.save(author=self.request.user)
 
     def delete(self, request, recipe):

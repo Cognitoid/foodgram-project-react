@@ -201,6 +201,7 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
+        ordering = ['ingredient__name']
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],

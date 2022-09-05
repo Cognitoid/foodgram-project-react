@@ -97,12 +97,18 @@ class SubscribeListSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_recipes(self, obj):
-        recipes = obj.recipes.all()[:3]
-        request = self.context.get('request')
+        recipes_limit = self.context.get('request').GET.get(
+            'recipes_limit',
+            None
+        )
+        if recipes_limit is not None:
+            recipes = obj.recipes.all()[:int(recipes_limit)]
+        else:
+            recipes = obj.recipes.all()
         return RecipeReadSerializer(
             recipes,
             many=True,
-            context={'request': request}
+            read_only=True
         ).data
 
     def get_recipes_count(self, obj):

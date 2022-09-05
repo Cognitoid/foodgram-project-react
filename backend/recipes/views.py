@@ -1,6 +1,7 @@
 from django.db.models.expressions import Exists, OuterRef
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework.filters import DjangoFilterBackend, SearchFilter
+from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework.permissions import AllowAny, SAFE_METHODS
 from rest_framework.response import Response

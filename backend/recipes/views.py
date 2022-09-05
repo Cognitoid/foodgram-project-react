@@ -1,6 +1,6 @@
 from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404
-from rest_framework import filters
+from rest_framework.filters import DjangoFilterBackend, SearchFilter
 from rest_framework import status
 from rest_framework.permissions import AllowAny, SAFE_METHODS
 from rest_framework.response import Response
@@ -37,7 +37,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     search_fields = ['name']
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (SearchFilter, DjangoFilterBackend)
     filter_class = RecipeFilter
     permission_classes = [IsAuthorAdminModeratorOrReadOnly, ]
 

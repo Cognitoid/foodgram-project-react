@@ -145,6 +145,7 @@ class PurchaseViewSet(BaseFavoriteCartViewSet):
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
     model = Purchase
+    pagination_class = None
 
 
 class FavoriteViewSet(BaseFavoriteCartViewSet):

@@ -99,7 +99,7 @@ class RecipeWriteSerializer(ModelSerializer):
                 )
             if ingredient['amount'] < 1:
                 raise ValidationError(
-                    f'Количество ингредиента {ingredient["amount"]}'
+                    f'Количество ингредиента {ingredient["name"]}'
                     f' не может быть отрицательным'
                 )
             ingredients_set.add(ingredient['id'])

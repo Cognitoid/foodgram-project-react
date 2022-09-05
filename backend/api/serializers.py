@@ -105,10 +105,11 @@ class SubscribeListSerializer(serializers.ModelSerializer):
             recipes = obj.recipes.all()[:int(recipes_limit)]
         else:
             recipes = obj.recipes.all()
+        request = self.context.get('request')
         return RecipeReadSerializer(
             recipes,
             many=True,
-            read_only=True
+            context={'request': request}
         ).data
 
     def get_recipes_count(self, obj):

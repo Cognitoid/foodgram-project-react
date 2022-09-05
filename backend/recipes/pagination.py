@@ -5,4 +5,3 @@ PAGE_SIZE = 6
 
 class LimitPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'limit'
-    page_size = PAGE_SIZE

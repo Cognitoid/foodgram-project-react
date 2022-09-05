@@ -10,6 +10,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api.models import Favorite, Purchase
 from recipes.filters import IngredientFilter, RecipeFilter
 from recipes.models import Ingredient, Recipe, Tag
+from recipes.pagination import LimitPageNumberPagination
 from recipes.permissions import IsAuthorAdminModeratorOrReadOnly
 from recipes.serializers import (
     IngredientSerializer,
@@ -36,6 +37,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
+    pagination_class = LimitPageNumberPagination
     queryset = Recipe.objects.all()
     search_fields = ['name']
     filter_backends = (SearchFilter, DjangoFilterBackend)

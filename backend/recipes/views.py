@@ -50,6 +50,9 @@ class RecipeViewSet(ModelViewSet):
         slug = self.request.query_params.get('tags')
         if slug is not None:
             queryset = queryset.filter(tags__slug=slug)
+        author = self.request.query_params.get('author')
+        if author is not None:
+            queryset = queryset.filter(author__id=author)
         user = self.request.user
         if user.is_anonymous:
             return queryset

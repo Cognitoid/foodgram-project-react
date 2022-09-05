@@ -97,6 +97,11 @@ class RecipeWriteSerializer(ModelSerializer):
                 raise ValidationError(
                     f'Ингредиент с ID={ingredient["id"]} не должен повторяться'
                 )
+            if ingredient['amount'] < 1:
+                raise ValidationError(
+                    f'Количество ингредиента {ingredient["amount"]}'
+                    f' не может быть отрицательным'
+                )
             ingredients_set.add(ingredient['id'])
         data['ingredients'] = ingredients
         tags = data['tags']

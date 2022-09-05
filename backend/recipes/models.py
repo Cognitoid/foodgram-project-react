@@ -190,12 +190,6 @@ class IngredientRecipe(models.Model):
         related_name='recipe_amount'
     )
     amount = models.PositiveIntegerField(
-        validators=[
-            MinValueValidator(
-                1,
-                message='Количество единиц ингредиента должно быть не менее 1!'
-            ),
-        ],
         blank=False,
         null=False
     )
